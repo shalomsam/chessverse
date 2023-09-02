@@ -1,0 +1,86 @@
+$darkChessboardAlt: #434343;
+
+.ChessBoardOuter {
+  .ChessBoardInner {
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+    grid-template-rows: repeat(8, 1fr);
+
+    .ChessGrid {
+      height: 52px;
+      width: 52px;
+      border: 1px solid $darkChessboardAlt;
+      box-sizing: border-box;
+      background: white;
+
+      &.even {
+        background: $darkChessboardAlt;
+      }
+    }
+  }
+}
+
+.ChessPiece {
+  height: 50px;
+  width: 50px;
+
+  &:global(.pawn) {
+    &:global(.white) {
+      background-image: url('../../../assets/pawn-white.png');
+    }
+
+    &:global(.black) {
+      background-image: url('../../../assets/pawn-black.png');
+    }
+  }
+
+  &:global(.bishop) {
+    &:global(.white) {
+      background-image: url('../../../assets/bishop-white.png');
+    }
+
+    &:global(.black) {
+      background-image: url('../../../assets/bishop-black.png');
+    }
+  }
+
+  &:global(.king) {
+    &:global(.white) {
+      background-image: url('../../../assets/king-white.png');
+    }
+
+    &:global(.black) {
+      background-image: url('../../../assets/king-black.png');
+    }
+  }
+
+  &:global(.knight) {
+    &:global(.white) {
+      background-image: url('../../../assets/knight-white.png');
+    }
+
+    &:global(.black) {
+      background-image: url('../../../assets/knight-black.png');
+    }
+  }
+
+  &:global(.queen) {
+    &:global(.white) {
+      background-image: url('../../../assets/queen-white.png');
+    }
+
+    &:global(.black) {
+      background-image: url('../../../assets/queen-black.png');
+    }
+  }
+
+  &:global(.rook) {
+    &:global(.white) {
+      background-image: url('../../../assets/rook-white.png');
+    }
+
+    &:global(.black) {
+      background-image: url('../../../assets/rook-black.png');
+    }
+  }
+}

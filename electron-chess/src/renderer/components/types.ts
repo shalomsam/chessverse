@@ -1,5 +1,3 @@
-// import ChesspieceModel from './ChesspieceModel';
-
 export enum ChessPieces {
   pawn = 'pawn', // x 8
   bishop = 'bishop', // x 2
@@ -19,4 +17,9 @@ export type ChessPiece = {
   id: string;
   color: ChessPieceColors;
   value: number;
+  grid?: string;
+};
+
+export type ChessboardGrid = {
+  [key: string]: '' | ChessPiece;
 };
