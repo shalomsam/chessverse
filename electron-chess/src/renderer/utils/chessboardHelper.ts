@@ -1,12 +1,12 @@
 import {
-  ChessPiece,
+  IChessPiece,
   ChessPieceColors,
-  ChessPieces,
+  ChessPieceType,
   ChessboardGrid,
 } from '../components/types';
 
-const yGrid: number[] = [1, 2, 3, 4, 5, 6, 7, 8];
-const xGrid: string[] = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
+export const yGrid: number[] = [1, 2, 3, 4, 5, 6, 7, 8];
+export const xGrid: string[] = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
 const grids: ChessboardGrid = {};
 
 export const ChessPiecesCountPerSide: { [key: string]: number } = {
@@ -29,10 +29,10 @@ export const ChessPieceValues: { [key: string]: number } = {
 
 export const chessPiece = (
   id: string,
-  name: ChessPieces,
+  name: ChessPieceType,
   color: ChessPieceColors,
   value: number,
-  grid?: string
+  grid: string
 ) => ({
   name,
   id,
@@ -41,7 +41,7 @@ export const chessPiece = (
   grid,
 });
 
-const initialPieceGrids: any = {
+export const initialPieceGrids: any = {
   pawn: {
     black: ['a7', 'b7', 'c7', 'd7', 'e7', 'f7', 'g7', 'h7'],
     white: ['a2', 'b2', 'c2', 'd2', 'e2', 'f2', 'g2', 'h2'],
@@ -68,10 +68,58 @@ const initialPieceGrids: any = {
   },
 };
 
-const setInitialPosition = (piece: ChessPiece) => {
-  const grid = initialPieceGrids[piece.name][piece.color].pop();
+const initialPieceGridsClone: any = {};
+
+const setInitialPosition = (piece: IChessPiece) => {
+  const initialPieceGridsInScope =
+    initialPieceGridsClone[piece.name][piece.color];
+  const grid = initialPieceGridsInScope.pop();
   piece.grid = grid;
   grids[grid] = piece;
+};
+
+const prepareInitPositionClone = (pieceType: string) => {
+  if (!initialPieceGridsClone[pieceType]) {
+    initialPieceGridsClone[pieceType] = {};
+  }
+
+  if (!initialPieceGridsClone[pieceType]?.[ChessPieceColors.white]) {
+    initialPieceGridsClone[pieceType] = {
+      ...initialPieceGridsClone[pieceType],
+      [ChessPieceColors.white]: [
+        ...initialPieceGrids[pieceType][ChessPieceColors.white],
+      ],
+    };
+  }
+
+  if (!initialPieceGridsClone[pieceType]?.[ChessPieceColors.black]) {
+    initialPieceGridsClone[pieceType] = {
+      ...initialPieceGridsClone[pieceType],
+      [ChessPieceColors.black]: [
+        ...initialPieceGrids[pieceType][ChessPieceColors.black],
+      ],
+    };
+  }
+};
+
+const generateChessPieces = (pieceType: string, i: number) => {
+  const whitePiece = chessPiece(
+    `${pieceType}${i + 1}`,
+    pieceType as ChessPieceType,
+    ChessPieceColors.white,
+    ChessPieceValues[pieceType],
+    ''
+  );
+
+  const blackPiece = chessPiece(
+    `${pieceType}${i + 1}`,
+    pieceType as ChessPieceType,
+    ChessPieceColors.black,
+    ChessPieceValues[pieceType],
+    ''
+  );
+
+  return { whitePiece, blackPiece };
 };
 
 const initializePieces = () => {
@@ -79,19 +127,9 @@ const initializePieces = () => {
     if ({}.hasOwnProperty.call(ChessPiecesCountPerSide, pieceType)) {
       const count = ChessPiecesCountPerSide[pieceType];
       for (let i = 0; i < count; i++) {
-        const whitePiece = chessPiece(
-          `${pieceType}${i + 1}`,
-          pieceType as ChessPieces,
-          ChessPieceColors.white,
-          ChessPieceValues[pieceType]
-        );
+        prepareInitPositionClone(pieceType);
 
-        const blackPiece = chessPiece(
-          `${pieceType}${i + 1}`,
-          pieceType as ChessPieces,
-          ChessPieceColors.black,
-          ChessPieceValues[pieceType]
-        );
+        const { whitePiece, blackPiece } = generateChessPieces(pieceType, i);
 
         setInitialPosition(whitePiece);
         setInitialPosition(blackPiece);
@@ -106,6 +144,7 @@ export const initializeChessboardGrids = (): ChessboardGrid => {
       grids[`${xGrid[x]}${yGrid[y]}`] = '';
     }
   }
+  // eslint-disable-next-line no-console
   console.log('Grids >> ', grids);
   initializePieces();
 

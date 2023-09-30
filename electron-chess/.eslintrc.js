@@ -17,6 +17,7 @@ module.exports = {
     'no-plusplus': 'off',
     'lines-between-class-members': 'off',
     'no-restricted-syntax': 'off',
+    'react/require-default-props': 'warn',
   },
   parserOptions: {
     ecmaVersion: 2020,

@@ -1,4 +1,4 @@
-export enum ChessPieces {
+export enum ChessPieceType {
   pawn = 'pawn', // x 8
   bishop = 'bishop', // x 2
   knight = 'knight', // x 2
@@ -12,14 +12,19 @@ export enum ChessPieceColors {
   black = 'black',
 }
 
-export type ChessPiece = {
-  name: ChessPieces;
+export enum AttackDirection {
+  up = 1,
+  down = -1,
+}
+
+export type IChessPiece = {
+  name: ChessPieceType;
   id: string;
   color: ChessPieceColors;
   value: number;
-  grid?: string;
+  grid: string;
 };
 
 export type ChessboardGrid = {
-  [key: string]: '' | ChessPiece;
+  [key: string]: '' | IChessPiece;
 };

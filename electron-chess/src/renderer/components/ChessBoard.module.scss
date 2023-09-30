@@ -16,6 +16,10 @@ $darkChessboardAlt: #434343;
       &.even {
         background: $darkChessboardAlt;
       }
+
+      &:global(.highlight-yellow) {
+        background-color: rgba(255, 255, 0, 0.5);
+      }
     }
   }
 }
