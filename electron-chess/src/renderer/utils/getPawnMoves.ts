@@ -3,10 +3,13 @@ import {
   MoveCoordinates,
   isWhite,
   isInitialPosition,
-  gridHasPiece,
   gridHasOpponent,
   isBlack,
   getGridAt,
+  MoveContext,
+  validateArray,
+  MoveValidation,
+  gridIsEmpty,
 } from './chessPieceHelper';
 
 /**
@@ -22,65 +25,64 @@ const getPawnMoves = (
 ) => {
   const possibleGrids: string[] = [];
   const moveCoordinates: MoveCoordinates = [
-    { x: 0, y: 1, condition: isWhite(chessPiece) },
+    {
+      x: 0,
+      y: 1,
+      conditions: [isWhite, gridIsEmpty],
+    },
     {
       x: 0,
       y: 2,
-      condition:
-        isInitialPosition(chessPiece) &&
-        isWhite(chessPiece) &&
-        (!gridHasPiece(chessPiece, { x: 0, y: 2 }, currentGridState) ||
-          gridHasOpponent(chessPiece, { x: 0, y: 2 }, currentGridState)),
+      conditions: [isInitialPosition, isWhite, gridIsEmpty],
     },
     {
       x: 1,
       y: 1,
-      condition:
-        isWhite(chessPiece) &&
-        (gridHasOpponent(chessPiece, { x: 1, y: 1 }, currentGridState) ||
-          !gridHasPiece(chessPiece, { x: 1, y: 1 }, currentGridState)),
+      conditions: [isWhite, gridHasOpponent],
     },
     {
       x: -1,
       y: 1,
-      condition:
-        isWhite(chessPiece) &&
-        (gridHasOpponent(chessPiece, { x: -1, y: 1 }, currentGridState) ||
-          !gridHasPiece(chessPiece, { x: -1, y: 1 }, currentGridState)),
+      conditions: [isWhite, gridHasOpponent],
     },
     {
       x: 0,
       y: -1,
-      condition:
-        isBlack(chessPiece) &&
-        (gridHasOpponent(chessPiece, { x: 0, y: -1 }, currentGridState) ||
-          !gridHasPiece(chessPiece, { x: 0, y: -1 }, currentGridState)),
+      conditions: [isBlack, gridIsEmpty],
     },
     {
       x: 0,
       y: -2,
-      condition: isBlack(chessPiece) && isInitialPosition(chessPiece),
+      conditions: [isBlack, isInitialPosition, gridIsEmpty],
     },
     {
       x: 1,
       y: -1,
-      condition:
-        isBlack(chessPiece) &&
-        gridHasOpponent(chessPiece, { x: 1, y: -1 }, currentGridState),
+      conditions: [isBlack, gridHasOpponent],
     },
     {
       x: -1,
       y: -1,
-      condition:
-        isBlack(chessPiece) &&
-        gridHasOpponent(chessPiece, { x: -1, y: -1 }, currentGridState),
+      conditions: [isBlack, gridHasOpponent],
     },
   ];
 
-  moveCoordinates.forEach(({ x, y, condition }) => {
-    if (condition === undefined || condition === true) {
-      const targetGrid = getGridAt(chessPiece.grid, { x, y });
-      if (targetGrid) possibleGrids.push(targetGrid);
+  moveCoordinates.forEach(({ x, y, conditions, condition }) => {
+    const context: MoveContext = {
+      chessPiece,
+      targetCoordinate: { x, y },
+      currentGridState,
+    };
+    const targetGrid = getGridAt(chessPiece.grid, { x, y });
+    if (
+      targetGrid !== undefined &&
+      currentGridState[targetGrid] !== undefined &&
+      (targetGrid === '' ||
+        (condition && condition === true) ||
+        (conditions?.length &&
+          validateArray(conditions as MoveValidation[], context)))
+    ) {
+      possibleGrids.push(targetGrid);
     }
   });
 

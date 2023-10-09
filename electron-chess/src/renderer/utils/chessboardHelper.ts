@@ -18,7 +18,7 @@ export const ChessPiecesCountPerSide: { [key: string]: number } = {
   king: 1,
 };
 
-export const ChessPieceValues: { [key: string]: number } = {
+export const ChessPieceValues: { [key: string | ChessPieceType]: number } = {
   pawn: 1,
   bishop: 3,
   knight: 3,

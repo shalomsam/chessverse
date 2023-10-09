@@ -20,12 +20,13 @@ export type MoveContext = {
   currentGridState: ChessboardGrid;
 };
 
-export type MoveContextArgs = [IChessPiece, Coordinate, ChessboardGrid];
+export type MoveContextArgs = [IChessPiece, Coordinate?, ChessboardGrid?];
 
 export type MoveValidation = (context: MoveContext) => boolean;
 
 export type MoveCoordinates = (Coordinate & {
-  condition?: boolean | MoveValidation | MoveValidation[];
+  condition?: boolean | MoveValidation;
+  conditions?: MoveValidation[];
 })[];
 
 export const isObjMoveContext = (
@@ -55,11 +56,6 @@ export const getGridAt = (currentGrid: string, to: Coordinate) => {
   return `${x}${y}`;
 };
 
-export const isInitialPosition = (chessPiece: IChessPiece) => {
-  const initialPositions = initialPieceGrids[chessPiece.name][chessPiece.color];
-  return initialPositions.indexOf(chessPiece.grid) > -1;
-};
-
 const getContextPropertiesFromArgs = (
   args: [MoveContext] | MoveContextArgs
 ): MoveContext => {
@@ -73,13 +69,26 @@ const getContextPropertiesFromArgs = (
   return args[0] as MoveContext;
 };
 
+export const isInitialPosition = (object: IChessPiece | MoveContext) => {
+  let chessPiece;
+  if (isObjMoveContext(object)) {
+    chessPiece = object.chessPiece;
+  } else {
+    chessPiece = object;
+  }
+  const initialPositions = initialPieceGrids[chessPiece.name][chessPiece.color];
+  return initialPositions.indexOf(chessPiece.grid) > -1;
+};
+
 export const gridHasOpponent = (...args: [MoveContext] | MoveContextArgs) => {
   const { chessPiece, targetCoordinate, currentGridState } =
     getContextPropertiesFromArgs(args);
   const targetGridKey = getGridAt(chessPiece.grid, targetCoordinate);
   const targetGridPiece = currentGridState[targetGridKey as string];
+  // console.debug('targetGridPiece >>', targetGridPiece);
   return (
     targetGridKey !== undefined &&
+    targetGridPiece !== undefined &&
     targetGridPiece !== '' &&
     targetGridPiece.color !== chessPiece.color
   );
@@ -91,6 +100,13 @@ export const gridHasPiece = (...args: [MoveContext] | MoveContextArgs) => {
   const targetGridKey = getGridAt(chessPiece.grid, targetCoordinate);
   const targetGridPiece = currentGridState[targetGridKey as string];
   return targetGridKey !== undefined && targetGridPiece !== '';
+};
+
+export const gridIsEmpty = (...args: [MoveContext] | MoveContextArgs) => {
+  const { chessPiece, targetCoordinate, currentGridState } =
+    getContextPropertiesFromArgs(args);
+  const targetGridKey = getGridAt(chessPiece.grid, targetCoordinate);
+  return currentGridState?.[targetGridKey as string] === '';
 };
 
 /**
