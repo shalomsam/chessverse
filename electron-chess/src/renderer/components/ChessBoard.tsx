@@ -1,9 +1,7 @@
 import React from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import {
-  calculatepPossibleMoves,
-  getChessPieceMovesKey,
-} from 'renderer/utils/chessPieceHelper';
+import { getChessPieceMovesKey } from 'renderer/utils/chessPieceHelper';
+import calculatepPossibleMoves from 'renderer/utils/calculatePossibleMoves';
 import {
   chessBoardGridState,
   ChessPiecePossibleMovesState,
